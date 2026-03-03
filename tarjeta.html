@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarjeta Fidelidad CrossFit</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: Arial, sans-serif; 
+            background: #0a0a0a; 
+            color: #fff; 
+            padding: 20px; 
+        }
+        .container { max-width: 600px; margin: 0 auto; }
+        h1 { 
+            text-align: center; 
+            color: #ff4500; 
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+        }
+        .subtitle { 
+            text-align: center; 
+            color: #fff; 
+            margin-bottom: 30px;
+            font-size: 1.2rem;
+        }
+        .card { 
+            background: #1a1a1a; 
+            border: 2px solid #ff4500; 
+            border-radius: 15px; 
+            padding: 20px; 
+            margin-bottom: 20px; 
+        }
+        .progress { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 15px; 
+        }
+        .months { font-size: 2rem; color: #ff4500; }
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 15px; 
+            margin: 20px 0;
+        }
+        .stamp { 
+            aspect-ratio: 1; 
+            background: #333; 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 1.2rem;
+            border: 3px solid #555;
+        }
+        .stamp.active { background: #ff4500; border-color: #ff4500; }
+        .stamp.reward { border-color: #ffd700; color: #ffd700; }
+        .stamp.reward.active { background: #ffd700; color: #000; }
+        button { 
+            background: #ff4500; 
+            color: #fff; 
+            border: none; 
+            padding: 10px 20px; 
+            border-radius: 5px; 
+            cursor: pointer;
+            margin: 5px;
+        }
+        .feedback { margin-top: 20px; }
+        input, textarea, select { 
+            width: 100%; 
+            padding: 10px; 
+            margin: 5px 0; 
+            background: #222;
+            border: 1px solid #444;
+            color: #fff;
+            border-radius: 5px;
+        }
+        .stars { font-size: 1.5rem; color: #555; cursor: pointer; }
+        .stars span:hover, .stars span.active { color: #ffd700; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>TARJETA DE FIDELIDAD</h1>
+        <div class="subtitle">CROSSFIT BOX</div>
+        
+        <div class="card">
+            <div class="progress">
+                <div>
+                    <div style="font-size: 1.3rem;">ATLETA</div>
+                    <div style="color: #888; font-size: 0.9rem;">Miembro desde 2024</div>
+                </div>
+                <div class="months"><span id="count">0</span>/6</div>
+            </div>
+            <div style="background: #333; height: 10px; border-radius: 5px;">
+                <div id="bar" style="background: #ff4500; height: 100%; width: 0%; border-radius: 5px; transition: 0.3s;"></div>
+            </div>
+        </div>
+
+        <div class="grid" id="stamps"></div>
+
+        <div style="text-align: center; margin: 20px 0;">
+            <button onclick="addMonth()">+ Añadir Mes</button>
+            <button onclick="reset()">Reiniciar</button>
+            <button onclick="setMonths(3)">3 meses</button>
+            <button onclick="setMonths(6)">6 meses</button>
+        </div>
+
+        <div class="card feedback">
+            <h3 style="color: #ff4500; margin-bottom: 15px;">TU OPINIÓN IMPORTA</h3>
+            <div class="stars" onclick="rate(event)">
+                <span data-r="1">?</span>
+                <span data-r="2">?</span>
+                <span data-r="3">?</span>
+                <span data-r="4">?</span>
+                <span data-r="5">?</span>
+            </div>
+            <select id="area">
+                <option>Coaching</option>
+                <option>Instalaciones</option>
+                <option>Clases</option>
+                <option>Comunidad</option>
+            </select>
+            <textarea id="msg" rows="3" placeholder="Tu mensaje..."></textarea>
+            <button onclick="send()" style="width: 100%; margin-top: 10px;">ENVIAR</button>
+        </div>
+    </div>
+
+    <script>
+        let months = 0;
+        
+        function render() {
+            document.getElementById('count').textContent = months;
+            document.getElementById('bar').style.width = (months/6*100) + '%';
+            const grid = document.getElementById('stamps');
+            grid.innerHTML = '';
+            for(let i=1; i<=6; i++) {
+                const div = document.createElement('div');
+                div.className = 'stamp' + (i<=months ? ' active' : '') + (i==3||i==6 ? ' reward' : '');
+                div.textContent = i==3 ? '2x1' : i==6 ? '50%' : i;
+                grid.appendChild(div);
+            }
+            if(months==3) alert('¡2x1 Desbloqueado! Trae a un amigo gratis');
+            if(months==6) alert('¡50% Descuento en tu próxima mensualidad!');
+        }
+        
+        function addMonth() { if(months<6) { months++; render(); } }
+        function reset() { months=0; render(); }
+        function setMonths(n) { months=n; render(); }
+        function rate(e) { 
+            if(e.target.dataset.r) {
+                document.querySelectorAll('.stars span').forEach((s,i) => {
+                    s.className = i < e.target.dataset.r ? 'active' : '';
+                });
+            }
+        }
+        function send() { 
+            alert('¡Gracias por tu feedback!'); 
+            document.getElementById('msg').value = '';
+        }
+        
+        render();
+    </script>
+</body>
+</html>
